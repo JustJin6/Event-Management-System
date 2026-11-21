@@ -53,6 +53,8 @@ jobs:
           node-version: 26
       - run: npm install
       - run: npm test -- --no-watch
+        env:
+          NODE_OPTIONS: --no-webstorage
       - run: npm run build
       - name: Security audit (production dependencies)
         run: npm audit --omit=dev --audit-level=high

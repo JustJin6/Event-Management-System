@@ -5,12 +5,12 @@ Whenever something changes, every connected browser is updated **live over WebSo
 
 | Layer | Technology |
 |---|---|
-| Front end | Angular 22, TypeScript 6.0, HTML/CSS |
-| Back end | Node.js, Express 5 (JavaScript) |
+| Frontend | Angular 22, TypeScript 6.0, HTML/CSS |
+| Backend | Node.js, Express 5 (JavaScript) |
 | Database | MongoDB (Mongoose 9) |
-| Authentication | JWT (jsonwebtoken) + bcryptjs password hashing |
-| Real-time | Socket.IO 4.8 (WebSocket transport) |
-| Testing | Jest 30 (back end: unit, integration, system), Angular's built-in test runner Vitest (front end), manual UAT |
+| Authentication | JWT (JSON Web Token) + Bcryptjs Password Hashing |
+| Real-time | Socket.IO 4.8 (WebSocket Transport) |
+| Testing | Jest 30 (Backend: Unit, Integration, System), Angular's built-in test runner Vitest (Frontend), manual UAT |
 | CI/CD | GitHub Actions + Docker Compose |
 
 ## 1. Run everything with Docker (Easiest)
@@ -18,8 +18,8 @@ Whenever something changes, every connected browser is updated **live over WebSo
 Requires Docker Desktop (or Docker Engine + Compose).
 
 ```bash
-docker compose up --build          # first start takes a few minutes
-docker compose run --rm backend node src/seed/seed.js   # optional demo data
+docker compose up --build          # First start takes a few minutes
+docker compose run --rm backend node src/seed/seed.js   # Optional demo data
 ```
 
 * Web app: <http://localhost:8080>
@@ -48,8 +48,8 @@ docker compose up -d mongo         # MongoDB on localhost:27017
 ```bash
 cd backend
 npm install
-cp .env.example .env               # then set JWT_SECRET to a long random string
-npm run seed                       # optional demo data
+cp .env.example .env               # Then set JWT_SECRET to a long random string
+npm run seed                       # Optional demo data
 npm run dev                        # API + WebSocket on http://localhost:3000
 ```
 
