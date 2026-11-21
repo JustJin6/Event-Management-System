@@ -1,0 +1,39 @@
+<p><a routerLink="/events">← Back to events</a></p>
+
+@if (event(); as e) {
+  <section class="card">
+    <h1>{{ e.title }}</h1>
+    <p class="muted">{{ e.date | date: 'fullDate' }} at {{ e.date | date: 'shortTime' }} · {{ e.venue }}</p>
+    <p class="description">{{ e.description }}</p>
+
+    <p>
+      @if (e.seatsAvailable === 0) {
+        <span class="badge badge-full">Full</span>
+      } @else {
+        <span class="badge badge-ok">{{ e.seatsAvailable }} of {{ e.capacity }} seats left</span>
+      }
+      @if (isRegistered()) {
+        <span class="badge badge-info">You are registered</span>
+      }
+    </p>
+
+    @if (message()) {
+      <p class="alert alert-ok" role="status">{{ message() }}</p>
+    }
+    @if (error()) {
+      <p class="alert alert-error" role="alert">{{ error() }}</p>
+    }
+
+    @if (isRegistered()) {
+      <button type="button" class="btn btn-danger" [disabled]="busy()" (click)="cancel()">Cancel registration</button>
+    } @else {
+      <button type="button" class="btn" [disabled]="busy() || e.seatsAvailable === 0" (click)="register()">
+        {{ e.seatsAvailable === 0 ? 'Event is full' : 'Register for this event' }}
+      </button>
+    }
+  </section>
+} @else if (store.loading()) {
+  <p class="muted">Loading…</p>
+} @else {
+  <p class="alert alert-error">This event is no longer available.</p>
+}

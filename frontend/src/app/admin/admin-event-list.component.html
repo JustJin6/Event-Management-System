@@ -1,0 +1,51 @@
+<div class="page-header">
+  <h1>Manage events</h1>
+  <a class="btn" routerLink="/admin/events/new">+ Create event</a>
+</div>
+
+@if (notice()) {
+  <p class="alert alert-ok" role="status">{{ notice() }}</p>
+}
+@if (error() || store.error()) {
+  <p class="alert alert-error" role="alert">{{ error() || store.error() }}</p>
+}
+
+@if (store.loading() && store.events().length === 0) {
+  <p class="muted">Loading events…</p>
+} @else if (store.events().length === 0) {
+  <p class="muted">No events yet. Create the first one.</p>
+} @else {
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Date</th>
+          <th>Venue</th>
+          <th>Registered</th>
+          <th>Capacity</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (e of store.events(); track e.eventId) {
+          <tr>
+            <td>{{ e.title }}</td>
+            <td>{{ e.date | date: 'd MMM y, h:mm a' }}</td>
+            <td>{{ e.venue }}</td>
+            <td>{{ e.registeredCount }} / {{ e.capacity }}</td>
+            <td class="capacity-cell">
+              <input #cap type="number" min="1" [value]="e.capacity" [attr.aria-label]="'Capacity for ' + e.title">
+              <button type="button" class="btn btn-small btn-secondary" (click)="setCapacity(e, cap.value)">Set</button>
+            </td>
+            <td class="actions">
+              <a class="btn btn-small btn-secondary" [routerLink]="['/admin/events', e.eventId, 'participants']">Participants</a>
+              <a class="btn btn-small btn-secondary" [routerLink]="['/admin/events', e.eventId, 'edit']">Edit</a>
+              <button type="button" class="btn btn-small btn-danger" (click)="delete(e)">Delete</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

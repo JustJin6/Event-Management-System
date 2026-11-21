@@ -1,0 +1,26 @@
+<header class="navbar">
+  <a class="brand" [routerLink]="auth.isLoggedIn() ? auth.homeUrl() : '/login'">Event Management</a>
+
+  @if (auth.isLoggedIn()) {
+    <nav class="nav-links">
+      @if (auth.isAdmin()) {
+        <a routerLink="/admin/events" routerLinkActive="active">Manage events</a>
+      } @else {
+        <a routerLink="/events" routerLinkActive="active">Events</a>
+        <a routerLink="/my-registrations" routerLinkActive="active">My registrations</a>
+      }
+    </nav>
+
+    <div class="nav-right">
+      <span class="live" [class.live-on]="socket.connected()" title="Real-time connection status">
+        {{ socket.connected() ? 'Live' : 'Offline' }} · {{ socket.online() }} online
+      </span>
+      <span class="user-name">{{ auth.user()?.name }} ({{ auth.user()?.role }})</span>
+      <button type="button" class="btn btn-secondary" (click)="auth.logout()">Log out</button>
+    </div>
+  }
+</header>
+
+<main class="container">
+  <router-outlet />
+</main>

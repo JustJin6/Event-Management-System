@@ -1,0 +1,37 @@
+<p><a routerLink="/admin/events">← Back to events</a></p>
+
+@if (error()) {
+  <p class="alert alert-error" role="alert">{{ error() }}</p>
+}
+
+@if (event(); as e) {
+  <h1>Participants – {{ e.title }}</h1>
+  <p class="muted">
+    {{ e.date | date: 'EEE d MMM y, h:mm a' }} · {{ e.venue }} ·
+    <strong>{{ e.registeredCount }} / {{ e.capacity }}</strong> seats taken
+  </p>
+}
+
+@if (loading()) {
+  <p class="muted">Loading…</p>
+} @else if (participants().length === 0) {
+  <p class="muted">Nobody has registered for this event yet.</p>
+} @else {
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>#</th><th>Name</th><th>Email</th><th>Registered on</th></tr>
+      </thead>
+      <tbody>
+        @for (p of participants(); track p.registrationId; let i = $index) {
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ p.user.name }}</td>
+            <td>{{ p.user.email }}</td>
+            <td>{{ p.registrationDate | date: 'd MMM y, h:mm a' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+}

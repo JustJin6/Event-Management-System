@@ -1,0 +1,23 @@
+<h1>My registrations</h1>
+
+@if (error()) {
+  <p class="alert alert-error" role="alert">{{ error() }}</p>
+}
+
+@if (loading()) {
+  <p class="muted">Loading…</p>
+} @else if (items().length === 0) {
+  <p class="muted">You have not registered for any events yet. <a routerLink="/events">Browse events</a></p>
+} @else {
+  <div class="grid">
+    @for (r of items(); track r.registrationId) {
+      <article class="card">
+        <h2>{{ r.event.title }}</h2>
+        <p class="muted">{{ r.event.date | date: 'EEE d MMM y, h:mm a' }} · {{ r.event.venue }}</p>
+        <p class="muted">Registered on {{ r.registrationDate | date: 'd MMM y, h:mm a' }}</p>
+        <a class="btn btn-secondary" [routerLink]="['/events', r.eventId]">View event</a>
+        <button type="button" class="btn btn-danger" (click)="cancel(r)">Cancel registration</button>
+      </article>
+    }
+  </div>
+}

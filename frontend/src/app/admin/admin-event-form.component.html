@@ -1,0 +1,46 @@
+<p><a routerLink="/admin/events">← Back to events</a></p>
+
+<section class="card">
+  <h1>{{ eventId ? 'Edit event' : 'Create event' }}</h1>
+
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <label for="title">Title</label>
+      <input id="title" type="text" formControlName="title">
+      @if (form.controls.title.touched && form.controls.title.invalid) {
+        <p class="field-error">Title must be 3-100 characters.</p>
+      }
+
+      <label for="description">Description</label>
+      <textarea id="description" rows="4" formControlName="description"></textarea>
+      @if (form.controls.description.touched && form.controls.description.invalid) {
+        <p class="field-error">Description is required (max 2000 characters).</p>
+      }
+
+      <label for="date">Date and time</label>
+      <input id="date" type="datetime-local" formControlName="date">
+      @if (form.controls.date.touched && form.controls.date.invalid) {
+        <p class="field-error">Choose a date and time.</p>
+      }
+
+      <label for="venue">Venue</label>
+      <input id="venue" type="text" formControlName="venue">
+      @if (form.controls.venue.touched && form.controls.venue.invalid) {
+        <p class="field-error">Venue must be 2-100 characters.</p>
+      }
+
+      <label for="capacity">Capacity (number of seats)</label>
+      <input id="capacity" type="number" min="1" formControlName="capacity">
+      @if (form.controls.capacity.touched && form.controls.capacity.invalid) {
+        <p class="field-error">Capacity must be a whole number of at least 1.</p>
+      }
+
+      @if (error()) {
+        <p class="alert alert-error" role="alert">{{ error() }}</p>
+      }
+      <button type="submit" class="btn" [disabled]="busy()">{{ busy() ? 'Saving…' : 'Save event' }}</button>
+    </form>
+  }
+</section>

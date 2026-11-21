@@ -1,0 +1,31 @@
+<h1>Available events</h1>
+
+@if (store.error()) {
+  <p class="alert alert-error" role="alert">{{ store.error() }}</p>
+}
+
+@if (store.loading() && upcoming().length === 0) {
+  <p class="muted">Loading events…</p>
+} @else if (upcoming().length === 0) {
+  <p class="muted">There are no upcoming events right now.</p>
+}
+
+<div class="grid">
+  @for (e of upcoming(); track e.eventId) {
+    <article class="card">
+      <h2>{{ e.title }}</h2>
+      <p class="muted">{{ e.date | date: 'EEE d MMM y, h:mm a' }} · {{ e.venue }}</p>
+      <p>
+        @if (e.seatsAvailable === 0) {
+          <span class="badge badge-full">Full</span>
+        } @else {
+          <span class="badge badge-ok">{{ e.seatsAvailable }} of {{ e.capacity }} seats left</span>
+        }
+        @if (isRegistered(e.eventId)) {
+          <span class="badge badge-info">You are registered</span>
+        }
+      </p>
+      <a class="btn" [routerLink]="['/events', e.eventId]">View details</a>
+    </article>
+  }
+</div>

@@ -1,0 +1,44 @@
+# Starts the whole system:  docker compose up --build
+#   Web app:  http://localhost:8080
+#   API:      http://localhost:3000/api/health
+# Load demo data (optional):  docker compose run --rm backend node src/seed/seed.js
+services:
+  mongo:
+    image: mongo:8.0
+    restart: unless-stopped
+    ports:
+      - "27017:27017" # lets you run the back end / tests on your own machine against this database
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      MONGODB_URI: mongodb://mongo:27017/event_management
+      # Change these for anything other than local demos (put them in a .env file next to this one)
+      JWT_SECRET: ${JWT_SECRET:-31a7045b44f23d63005030b8fd69daceab7a1d5cb92aa48524c73f0a445bb88d}
+      ADMIN_SIGNUP_CODE: ${ADMIN_SIGNUP_CODE:-ADMIN-2026}
+      TRUST_PROXY: "1"
+    ports:
+      - "3000:3000"
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
