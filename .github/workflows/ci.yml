@@ -1,14 +1,25 @@
-name: CI
+
+name: CI and CD
 
 on:
   push:
     branches: [main]
+
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
+
+  # =====================================
+  # BACKEND - CONTINUOUS INTEGRATION
+  # =====================================
+
   backend:
-    name: Back end - lint, unit, integration and system tests
+    name: Backend - lint, unit, integration and system tests
     runs-on: ubuntu-latest
+
     services:
       mongo:
         image: mongo:8.0
@@ -19,50 +30,125 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 12
+
     defaults:
       run:
         working-directory: backend
+
     env:
       MONGODB_URI_TEST: mongodb://127.0.0.1:27017/event_management_test
+
     steps:
       - uses: actions/checkout@v7
+
       - uses: actions/setup-node@v7
         with:
           node-version: 26
+
       - run: npm install
+
       - run: npm run lint
+
       - run: npm test
+
       - name: Security audit (production dependencies)
         run: npm audit --omit=dev --audit-level=high
-      - uses: actions/upload-artifact@v7
+
+      - name: Upload backend coverage
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: backend-coverage
           path: backend/coverage
 
+
+  # =====================================
+  # FRONTEND - CONTINUOUS INTEGRATION
+  # =====================================
+
   frontend:
-    name: Front end - unit tests and production build
+    name: Frontend - unit tests and production build
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pages: read
+
     defaults:
       run:
         working-directory: frontend
+
     steps:
       - uses: actions/checkout@v7
+
       - uses: actions/setup-node@v7
         with:
           node-version: 26
+
       - run: npm install
-      - run: npm test -- --no-watch
+
+      - name: Run frontend tests
+        run: npm test -- --no-watch
         env:
           NODE_OPTIONS: --no-webstorage
-      - run: npm run build
+
+      - name: Build production application
+        run: npm run build
+
       - name: Security audit (production dependencies)
         run: npm audit --omit=dev --audit-level=high
+
+      # Prepare GitHub Pages
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      # Upload frontend production build
+      - name: Upload production files
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: ./frontend/dist
+
+
+  # =====================================
+  # DOCKER - CONTINUOUS INTEGRATION
+  # =====================================
 
   docker:
     name: Docker images build
     runs-on: ubuntu-latest
+
     needs: [backend, frontend]
+
     steps:
       - uses: actions/checkout@v7
-      - run: docker compose build
+
+      - name: Build Docker images
+        run: docker compose build
+
+
+  # =====================================
+  # DEPLOYMENT - CONTINUOUS DEPLOYMENT
+  # =====================================
+
+  deploy:
+    name: Deploy frontend to GitHub Pages
+
+    needs: [backend, frontend, docker]
+
+    # Deploy only when pushing to main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

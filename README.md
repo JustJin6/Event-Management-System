@@ -102,10 +102,10 @@ Make sure only use the `Private` network profile on a trusted network, such as h
 
 ```bash
 cd backend
-npm run test:unit          # no database needed
-npm run test:integration   # needs MongoDB on localhost:27017 (uses the separate "event_management_test" database)
-npm run test:system        # full HTTP + two real WebSocket clients
-npm test                   # everything + coverage report (coverage/lcov-report/index.html)
+npm run test:unit          # No database needed
+npm run test:integration   # Needs MongoDB on localhost:27017 (uses the separate "event_management_test" database)
+npm run test:system        # Full HTTP + two real WebSocket clients
+npm test                   # Everything + coverage report (coverage/lcov-report/index.html)
 npm run lint               # ESLint static analysis
 
 cd ../frontend
