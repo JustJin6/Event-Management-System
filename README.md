@@ -43,7 +43,7 @@ Requires Node.js 24.13.1 or newer (24 LTS or 26) and a MongoDB. The simplest Mon
 docker compose up -d mongo         # MongoDB on localhost:27017
 ```
 
-**Back end** (Terminal 1)
+**Backend** (Terminal 1)
 
 ```bash
 cd backend
@@ -53,7 +53,7 @@ npm run seed                       # Optional demo data
 npm run dev                        # API + WebSocket on http://localhost:3000
 ```
 
-**Front end** (Terminal 2)
+**Frontend** (Terminal 2)
 
 ```bash
 cd frontend
@@ -65,14 +65,17 @@ After the first `npm install` in each folder, **commit the generated `package-lo
 
 ### Try the real-time features
 *Local (One Device)*
+
 Open two browsers (or one normal + one private window). Log in as the admin in one and as a participant in the other, then create/edit an event or register for one - the other window updates by itself. The navigation bar shows *Live* and how many users are online.
 
 OR *(Multiple Device connect to it)*
 
 `Option 1`
+
 On local device, go to "Windows Defender Firewall" -> "Advanced Security" -> "Select `Inbound Rules`" -> "Select `New Rule`" -> "Choose `Port`" -> "Select `TCP` and enter `4200` (Default) under `Specific` local ports" -> "Choose `Allow the connection`" -> "Enable `Private` only" -> "Name it as `Angular Dev Server - Local Network Only`"
 
 `Option 2 (More Restrictive Rule)`
+
 On local device, run `Windows PowerShell as Administrator`:
 New-NetFirewallRule `
   -DisplayName "Angular Dev Server - Local Network Only" `
@@ -120,18 +123,18 @@ All routes except register/login need `Authorization: Bearer <token>`.
 
 | Method & path | Who | Purpose |
 |---|---|---|
-| POST `/api/auth/register` | public | create account (admin with signup code) |
-| POST `/api/auth/login` | public | log in, returns JWT |
-| GET `/api/auth/me` | any | current user |
-| GET `/api/events`, GET `/api/events/:id` | any | view events / details (with seats left) |
-| POST `/api/events` | admin | create event |
-| PUT `/api/events/:id` | admin | update event |
-| PATCH `/api/events/:id/capacity` | admin | change capacity |
-| DELETE `/api/events/:id` | admin | delete event (and its registrations) |
-| GET `/api/events/:id/participants` | admin | registered participants |
-| POST `/api/events/:id/register` | participant | register |
-| DELETE `/api/events/:id/register` | participant | cancel registration |
-| GET `/api/registrations/mine` | participant | my registered events |
+| POST `/api/auth/register` | Public | Create account (admin with signup code) |
+| POST `/api/auth/login` | Public | Log in, returns JWT |
+| GET `/api/auth/me` | Any | Current user |
+| GET `/api/events`, GET `/api/events/:id` | Any | View events / details (with seats left) |
+| POST `/api/events` | Admin | Create event |
+| PUT `/api/events/:id` | Admin | Update event |
+| PATCH `/api/events/:id/capacity` | Admin | Change capacity |
+| DELETE `/api/events/:id` | Admin | Delete event (and its registrations) |
+| GET `/api/events/:id/participants` | Admin | Registered participants |
+| POST `/api/events/:id/register` | Participant | Register |
+| DELETE `/api/events/:id/register` | Participant | Cancel registration |
+| GET `/api/registrations/mine` | Participant | My registered events |
 
 WebSocket messages (server -> client): `event:created`, `event:updated`, `event:deleted`, `event:seats`, `presence`.
 
@@ -139,11 +142,11 @@ WebSocket messages (server -> client): `event:created`, `event:updated`, `event:
 
 ```
 backend/src
-  config/       environment + database connection
+  config/       Environment + database connection
   models/       User, Event, Registration (Mongoose)
   routes/       URL -> controller mapping and who may call it
-  controllers/  read the request, call a service, send the response (+ WebSocket broadcast)
-  services/     the business rules (capacity, duplicates, login)
+  controllers/  Read the request, call a service, send the response (+ WebSocket broadcast)
+  services/     The business rules (capacity, duplicates, login)
   middleware/   JWT check, role check, error handler
   sockets/      Socket.IO set-up and broadcast helper
   utils/        validators, presenters (response shapes), AppError
