@@ -13,7 +13,7 @@ permissions:
 jobs:
 
   # =====================================
-  # BACKEND - CONTINUOUS INTEGRATION
+  # Backend - Continuous Integration
   # =====================================
 
   backend:
@@ -63,7 +63,7 @@ jobs:
 
 
   # =====================================
-  # FRONTEND - CONTINUOUS INTEGRATION
+  # Frontend - Continuous Integration
   # =====================================
 
   frontend:
@@ -92,11 +92,33 @@ jobs:
         env:
           NODE_OPTIONS: --no-webstorage
 
-      - name: Build production application
-        run: npm run build
-
       - name: Security audit (production dependencies)
         run: npm audit --omit=dev --audit-level=high
+
+      - name: Build production application
+        run: npm run build -- --configuration production --base-href "/${{ github.event.repository.name }}/" --output-path=dist/site
+
+      - name: Find browser output
+        id: angular-output
+        shell: bash
+        run: |
+          INDEX_FILE=$(find dist/site \
+            -type f \
+            -name index.html \
+            -not -path '*/server/*' \
+            -print -quit)
+
+          if [ -z "$INDEX_FILE" ]; then
+            echo "ERROR: Angular index.html was not found!"
+            exit 1
+          fi
+
+          SITE_DIR=$(dirname "$INDEX_FILE")
+
+          # Support Angular client-side routes on GitHub Pages
+          cp "$INDEX_FILE" "$SITE_DIR/404.html"
+
+          echo "path=frontend/$SITE_DIR" >> "$GITHUB_OUTPUT"
 
       # Prepare GitHub Pages
       - name: Configure GitHub Pages
@@ -106,11 +128,11 @@ jobs:
       - name: Upload production files
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./frontend/dist
+          path: ${{ steps.angular-output.outputs.path }}
 
 
   # =====================================
-  # DOCKER - CONTINUOUS INTEGRATION
+  # Docker - Continuous Integration
   # =====================================
 
   docker:
@@ -127,7 +149,7 @@ jobs:
 
 
   # =====================================
-  # DEPLOYMENT - CONTINUOUS DEPLOYMENT
+  # Deployment - Continuous Deployment
   # =====================================
 
   deploy:
