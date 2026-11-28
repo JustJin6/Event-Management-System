@@ -32,10 +32,10 @@ async function seed() {
   ]);
 
   const events = await Event.create([
-    { title: 'Intro to Web Development', description: 'A hands-on workshop covering HTML, CSS and JavaScript basics.', date: inDays(7, 10), venue: 'Lab 3, Block B', capacity: 30 },
-    { title: 'Cyber Security Awareness Talk', description: 'Learn how to spot phishing and protect your accounts.', date: inDays(10, 14), venue: 'Main Auditorium', capacity: 100 },
-    { title: 'Hackathon Kick-off', description: 'Meet your team and receive the challenge brief.', date: inDays(14, 9), venue: 'Innovation Hub', capacity: 3 },
-    { title: 'Career Fair', description: 'Meet employers and learn about internships.', date: inDays(21, 11), venue: 'Sports Hall', capacity: 200 },
+    { title: 'Intro to Web Development', description: 'A hands-on workshop covering HTML, CSS and JavaScript basics.', date: inDays(20, 10), venue: 'Lab 3, Block B', capacity: 30 },
+    { title: 'Cyber Security Awareness Talk', description: 'Learn how to spot phishing and protect your accounts.', date: inDays(23, 14), venue: 'Main Auditorium', capacity: 75 },
+    { title: 'Hackathon Kick-off', description: 'Meet your team and receive the challenge brief.', date: inDays(34, 9), venue: 'Innovation Hub', capacity: 20 },
+    { title: 'Career Fair', description: 'Meet employers and learn about internships.', date: inDays(41, 11), venue: 'Sports Hall', capacity: 100 },
   ]);
 
   await Registration.create({ userId: alice._id, eventId: events[2]._id });
